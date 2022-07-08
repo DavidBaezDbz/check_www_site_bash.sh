@@ -150,7 +150,7 @@ Install **7z**
     sudo apt install p7zip-full
 ```
 
-### POSTIFIX
+### POSTIFIX WITH GMAIL
 
 Install **postfix**
 
@@ -159,26 +159,53 @@ Install **postfix**
     sudo apt-get install postfix
 ```
 
+Review the next page, works for me. [https://tonyteaches.tech/postfix-gmail-smtp-on-ubuntu/](https://tonyteaches.tech/postfix-gmail-smtp-on-ubuntu/)
 
+Second password for you account gmail [https://www.youtube.com/watch?v=J4CtP1MBtOE](https://www.youtube.com/watch?v=J4CtP1MBtOE)
 
 
 ## Instalación 🔧
 
-_Una serie de ejemplos paso a paso que te dice lo que debes ejecutar para tener un entorno de desarrollo ejecutandose_
-
-_Dí cómo será ese paso_
+Clone my repository and enjoy.
 
 ```
-Da un ejemplo
+git clone git@github.com:DavidBaezDbz/check_www_site_bash.sh.git
 ```
 
-_Y repite_
+Give permison to the bash
 
+```sh
+chmod a+x check_sites_www.sh
 ```
-hasta finalizar
+or execute whit `bash` command
+
+```sh
+bash webstatus.sh 30 1 0
+```
+> Checks every 30 seconds with creating tests and send email with the evidence.
+
+And the las step, is fill the file email and websitecheck
+
+**email**
+```
+xxxxx@domain.com,xxxxx1@domain.com
+```
+**websitecheck**
+```
+https://www.xxxxxx.com
+https://www.yyyyyy.com
+https://www.dddddd.com
+https://www.bbbbbb.com
+https://www.zzzzzz.com
 ```
 
-_Finaliza con un ejemplo de cómo obtener datos del sistema o como usarlos para una pequeña demo_
+Example
+
+```sh
+bash webstatus.sh 20 1 0
+```
+> Checks every 20 seconds with creating tests and send email with the evidence.
+> 
 
 ## Ejecutando las pruebas ⚙️
 
