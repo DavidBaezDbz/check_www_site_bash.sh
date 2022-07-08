@@ -109,8 +109,9 @@ Usamos [SemVer](http://semver.org/) para el versionado. Para todas las versiones
 
 _Menciona a todos aquellos que ayudaron a levantar el proyecto desde sus inicios_
 
-* **Andrés Villanueva** - *Trabajo Inicial* - [villanuevand](https://github.com/villanuevand)
-* **Fulanito Detal** - *Documentación* - [fulanitodetal](#fulanito-de-tal)
+* **David Baez** - *Trabajo Inicial* - [DBZ repository]([https://github.com/villanuevand](https://github.com/DavidBaezDbz))
+> [David Baez]([https://davidbaezdbz.github.io/](https://davidbaezdbz.github.io/))
+
 
 También puedes mirar la lista de todos los [contribuyentes](https://github.com/your/project/contributors) quíenes han participado en este proyecto. 
 
