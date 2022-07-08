@@ -1,22 +1,41 @@
 #!/bin/bash
-if [ "$1" == "Debug" ] ; then set -x ; fi
+# Parameteres {1} = Duration on check  {2} = Send Evidence  {3} = only take a evidence and send and exit to the bach
+# Basic Functions and parameters
+if [ "$4" == "Debug" ] ; then set -x ; fi
 clear
 # color costants
-greenColour="\e[0;32m\033[1m"
-endColour="\033[0m\e[0m"
+black="\e[0;30m\033[1m"
 redColour="\e[0;31m\033[1m"
+lightredColour="\e[1;31m\033[1m"
+greenColour="\e[0;32m\033[1m"
+lightgreenColour="\e[1;32m\033[1m"
+yellowColour="\e[1;33m\033[1m"
+orangeColour="\e[0;33m\033[1m"
 blueColour="\e[0;34m\033[1m"
-yellowColour="\e[0;33m\033[1m"
+lightblueColour="\e[1;34m\033[1m"
 purpleColour="\e[0;35m\033[1m"
+lightpurpleColour="\e[1;35m\033[1m"
 turquoiseColour="\e[0;36m\033[1m"
+lightturquoiseColour="\e[1;36m\033[1m"
 grayColour="\e[0;37m\033[1m"
+white="\e[1;37m\033[1m"
+endColour="\033[0m\e[0m"
 RC=0
-# Basic Function
 trap ctrl_c INT
 function ctrl_c(){
-	echo -e "\n\n${yellowColour}[*]${endColour}${grayColour} Saliendo de ${greenColour}${0}${grayColour} ...\n${endColour}${blueColour}(Ctrl+C)${endColour}"
-	exit 1
+	echo -e "\n\n${yellowColour}[*]${endColour}${grayColour} Leaving ${greenColour}${0}${grayColour} ...\n${endColour}${blueColour}(Ctrl+C)${endColour}"
+    if [ -f wwwevidence/$DATECHECK/*.pdf ]
+    then
+        rm wwwevidence/$DATECHECK/*.pdf
+    fi 
+    echo -en "${greenColour}****************************************************************** ${lightpurpleColour}Completed $(date +%x) $(date +%X)${greenColour} ******************************************************************${endColour}\n" >> logwebstatus.log
+	exit 0
 }
+function Validate_Parameters () {
+    echo -en >&2 "$@"
+    exit 1
+}
+[ "$#" -ge 3 ] || Validate_Parameters "${redColour}3 argument required, $# provided${endColour}"
 function bannerDBZ(){
 	echo -e "\n${redColour}'||''|.                     ||       '||  '||''|.                           '||''|.   '||''|.   |'''''||  "
         sleep 0.05
@@ -24,100 +43,248 @@ function bannerDBZ(){
         sleep 0.05
         echo -e " ||    || '' .||   '|.  |   ||   .'  '||   ||'''|.  '' .||  .|...|| '  .|'   ||    ||  ||'''|.     ||     "
         sleep 0.05
-        echo -e " ||    || .|' ||    '|.|    ||   |.   ||   ||    || .|' ||  ||       .|'     ||    ||  ||    ||  .|'     ${endColour}${yellowColour}(${endColour}${grayColour}Creado por ${endColour}${redColour} DBZ - ${endColour}${purpleColour} Script check_sites_www ${endColour}${yellowColour})${endColour}${redColour}"
+        echo -e " ||    || .|' ||    '|.|    ||   |.   ||   ||    || .|' ||  ||       .|'     ||    ||  ||    ||  .|'     ${endColour}${yellowColour}(${endColour}${grayColour}Create By ${endColour}${redColour} DBZ - ${endColour}${purpleColour} Watch WebSite (V 2.0)..${endColour}${yellowColour})${endColour}${redColour}"
         sleep 0.05
         echo -e ".||...|'  '|..'|'    '|    .||.  '|..'||. .||...|'  '|..'|'  '|...' ||....| .||...|'  .||...|'  ||......| ${endColour}\n\n"
         sleep 0.05
 }
-bannerDBZ
-# Sitios a revisar
-site=(
-  "https://www.xxxx1.com/"
-  "https://www.xxxx2.com/"
-  "https://www.xxxx.com/"
-  # add sites to check
-)
-# Array to save the fail and slow request . If you add other site add a other 0 on the three arrays
-array_error=(0 0 0)
-array_l=(0 0 0 )
-array_l3=(0 0 0)
-# do not print colors if we are redirecting output
-COLOR(){
-  if [ -t 1 ] ; then
-    echo -ne $1
-  fi
+function banner(){
+        echo "+----------------------------------------------------------------------------------+"
+        printf "| %-80s |\n" "`date`"
+        echo "|                                                                                  |"
+	    printf "|`tput setab 2``tput setaf 0` %-80s `tput sgr0`|\n" "$@"
+        echo -e "+----------------------------------------------------------------------------------+\n\n"
 }
-# total of sites
-LEN=${#site[@]}
+# Create evidence directories
+function archivo_evidencias(){
+    if [ ! -d wwwevidence/ ]
+    then
+        mkdir wwwevidence
+    fi
+}
+function archivo_evidencias_date(){
+    if [ ! -d wwwevidence/${1} ]
+    then
+        mkdir wwwevidence/${1}
+    fi
+}
+# Create evidence the website / Open in wsl firefox and save image on pdf file of the website
+# sudo apt-get install cutycapt
+function take_evidence(){
+    echo -en "${lightgreenColour}[*]Evidence ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
+    #CAPT_FILE=$(date -u +"%Y-%m-%dT%H-%M-%SZ_%s")
+    #CAPT_FILE=${2}
+    CAPT_FILEHTML=$1-$2.html
+    CAPT_FILEPDF=$1-$2.pdf
+    CAPT_FILEHTML=$(echo $CAPT_FILEHTML | tr "/" "-" | sed s/://g | sed s/https//g | sed s/http//g | sed s/--//g | sed s/'#'//g )
+    CAPT_FILEPDF=$(echo evidence$CAPT_FILEPDF | tr "/" "-" | sed s/://g | sed s/https//g | sed s/http//g | sed s/--//g | sed s/'#'//g)
+    #echo CAPT_FILEHTML
+    echo -en "${lightgreenColour}[*]Open Web page ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
+    #open the webste on firefox
+    firefox $1 & 2>/dev/null
+    echo -en "${lightgreenColour}[*]Save evidence ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
+    #save the website in the directory
+    wget -O wwwevidence/$2/${CAPT_FILEHTML} -q - ${1}
+    echo -en "${lightgreenColour}[*]Open evidence in the terminal ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
+    #view the website in the terminal
+    cat  wwwevidence/$2/${CAPT_FILEHTML} | w3m -dump -T text/html
+    echo -en "${lightgreenColour}[*]Save in evidence image of the website ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
+    # save the website image in pdf file
+    cutycapt --max-wait=3000 --print-background=on --url=${1} --out=wwwevidence/$2/$CAPT_FILEPDF 2>/dev/null
+}
+function fill_array(){ 
+    for (( i=0; i<$1; i++ ))
+    do 
+        array_error[${#array_error[@]}]=0
+        array_l[${#array_l[@]}]=0
+        array_l5[${#array_l5[@]}]=0
+    done
+}
+bannerDBZ
+# Verify evidence directoryb
+archivo_evidencias
+# Check website array
+readarray -t site < websitecheck
+# Array para guardar errores
+web_len="${#site[@]}"
+#  Function to fill the three array
+fill_array $web_len
+# Counter for check websites
 CICLO=1
+#DATECHECK=$(date +%x)-$(date +%X)
+DATECHECK=$(echo $(date +%x)$(date +%X) | tr "/" "-" | sed s/://g | sed s/https//g | sed s/http//g | sed s/-//g | sed s/'#'//g)
+archivo_evidencias_date $DATECHECK
+if [ ${2} -eq "1" ]
+then
+    SENDEVIDENCE="1"
+else
+    SENDEVIDENCE="0"
+fi
+FIRSTCHECKERROR=""
+FIRSTCHECKSLOW=""
+FIRSTCHESCKVERYLOW=""
+echo -en "${greenColour}****************************************************************** ${blueColour}Checking $(date +%x) $(date +%X)${greenColour} ******************************************************************${endColour}\n" >> logwebstatus.log
 while true;
 do
     # counters
     SITES_DOWN=0
-    SITES_SLOW=0
-    for element in $(seq 0 $(($LEN - 1)))
+    for element in $(seq 0 $(($web_len - 1)))
     do
         # run curl
         RET=`curl -sL -w "%{http_code} %{time_total}\\n" "${site[$element]}" -o /dev/null`
         HTTP_CODE=`echo $RET | cut -d' ' -f1`
         TIME=`echo $RET | cut -d' ' -f2`
+        CHECK=$greenColour"<[OK]>"
         # put cursor at 1st column
-        echo -en "\033[1G";
-        # UP - DOWN SITE
-        if [ "$HTTP_CODE" -lt "400" ]; then
-            # site up
-            COLOR $greenColour
-        else
-            # site down
+        if [ "$HTTP_CODE" -ge "400" ] || [ "$HTTP_CODE" -eq "000" ]; then
+             # site down :( delay the checking
             SITES_DOWN=`expr $SITES_DOWN + 1`
+            # increment error counter
             array_error[element]=`expr ${array_error[$element]} + 1`
-            # i use wsl-notify-send.exe for send desktop alert
-            /mnt/c/xxx/xxx/wsl-notify-send.exe --appId "ERROR -- Availability" -c "IT" "${site[$element]} the site is down."
-            # write on log
-            echo -en "${redColour}${HTTP_CODE} ${greenBlue}[${TIME}s] ${turquoiseColour}[*]Check $(date +%x) $(date +%X)->${yellowColour}${site[$element]}${purpleColour} ${greenColour}C=$CICLO ${redColour}E=${array_error[$element]} ${turquoiseColour}L=${array_l[$element]} ${redColour}L3=${array_l3[$element]}${endColour}\n" >> logwebstatus.log
-            COLOR $redColour
+            # Only for wsl
+            /mnt/c/DBZ/DBZ/bash/notify-send/wsl-notify-send.exe --appId "ERROR -- WEBSITE IS DOWN" -c "Checking WebSites - IT" "${site[$element]} the website is not available."
+            # For linux
+            # DISPLAY=:0 notify-send -i dialog-error "Site check" "${SITES_DOWN} site(s) are not available"
+            if [ $CICLO -eq "1" ]
+            then
+                if [ $2 -eq "1" ]
+                then
+                    FIRSTCHECKERROR=$(echo -e '<h4><p><FONT COLOR="#003e6f">'$FIRSTCHECKERROR'TERROR CODE ON THE WEBSITE IS: <FONT COLOR="#c04242">['$HTTP_CODE's]<FONT COLOR="#003e6f"> ON '${site[$element]}' AT <FONT COLOR="#209747">'$(date +%x) $(date +%X)'. <FONT COLOR="#c04242">**THE WEBSITE IS DOWN**</p></h4>')
+                    HTTP_CODEFIRST=$HTTP_CODE
+                    CHECKFIRST="<[FAIL]>"
+                fi
+            fi
+            HTTP_CODE=$redColour$HTTP_CODE$endColour
+            CHECK=$redColour"<[FAIL]>"
+        else
+           # site up :)
+            if [ $CICLO -eq "1" ]
+            then
+                if [ $2 -eq "1" ]
+                then
+                    HTTP_CODEFIRST=$HTTP_CODE
+                    CHECKFIRST="<[OK]>"
+                fi
+            fi
+            HTTP_CODE=$greenColour$HTTP_CODE$endColour
         fi
-        # print HTTP status code
-        echo -en $HTTP_CODE
-        COLOR $endColour
-        # check if time is < 4 seconds
-        if [ "`echo $TIME | cut -d'.' -f1`" -gt "3" ]
+        # check if time is < 5 seconds
+        if [ "`echo $TIME | cut -d'.' -f1`" -gt "5" ]
         then
-            # site very slow (> 3s)
-            SITES_SLOW=`expr $SITES_SLOW + 1`
-            array_l3[element]=`expr ${array_l3[$element]} + 1`
-            # i use wsl-notify-send.exe for send desktop alert
-            /mnt/c/xxx/xxx/wsl-notify-send.exe --appId "ALERT -- SLOW 3s" -c "IT DBZ" "${site[$element]} slow site (4 Sec)."
-            # write on log
-            echo -en "${greenColour}${HTTP_CODE} ${greenBlue}[${TIME}s] ${turquoiseColour}[*]Check $(date +%x) $(date +%X)->${yellowColour}${site[$element]}${purpleColour} ${greenColour}C=$CICLO ${redColour}E=${array_error[$element]} ${turquoiseColour}L=${array_l[$element]} ${redColour}L3=${array_l3[$element]}${endColour}\n" >> logwebstatus.log
-            COLOR "\e[1;33m"
+            # site very slow (> 5s) 
+            array_l5[element]=`expr ${array_l5[$element]} + 1`
+            /mnt/c/DBZ/DBZ/bash/notify-send/wsl-notify-send.exe --appId "ALERT -- VERY SLOW 5s" -c "IT" "${site[$element]} The website is very slow to load (5 Segundos)."
+            if [ $CICLO -eq "1" ]
+            then
+                if [ $2 -eq "1" ]
+                then
+                    FIRSTCHESCKVERYLOW=$(echo -e '<h4><p><FONT COLOR="#003e6f">'$FIRSTCHESCKVERYLOW'TIME IS <FONT COLOR="#c04242">['$TIME's]<FONT COLOR="#003e6f"> LOAD THE WEBSITE '${site[$element]}' AT <FONT COLOR="#209747">'$(date +%x) $(date +%X)'. <FONT COLOR="#c04242">**THE WEBSITE IS VERY SLOW**</p></h4>')
+                    TIMEFIRST=[${TIME}s]
+                    CHECKFIRST="<[FAIL]>"
+                fi
+            fi
+            TIME=$redColour[${TIME}s]$endColour
+            CHECK=$redColour"<[FAIL]>"
         elif [ "`echo $TIME | cut -d'.' -f1`" -gt "0" ]
         then
-            # site slow (1 < time 3 )
+            # site slow (1 < time 5 )
             array_l[element]=`expr ${array_l[$element]} + 1`
-            #/mnt/c/xxx/xxx/wsl-notify-send.exe --appId "ALERT -- SLOW 1s" -c "IT DBZ" "${site[$element]} slow site(1 Sec)."
-            # write on log
-            echo -en "${greenColour}${HTTP_CODE} ${greenBlue}[${TIME}s] ${turquoiseColour}[*]Check $(date +%x) $(date +%X)->${yellowColour}${site[$element]}${purpleColour} ${greenColour}C=$CICLO ${redColour}E=${array_error[$element]} ${turquoiseColour}L=${array_l[$element]} ${redColour}L3=${array_l3[$element]}${endColour}\n" >> logwebstatus.log
-            COLOR "\e[0;33m"
+            if [ $CICLO -eq "1" ]
+            then
+                if [ $2 -eq "1" ]
+                then
+                    FIRSTCHECKSLOW=$(echo -e '<h4><p><FONT COLOR="#003e6f">'$FIRSTCHECKSLOW'TIME IS <FONT COLOR="#f9b233">['$TIME's]<FONT COLOR="#003e6f"> LOAD THE WEBSITE '${site[$element]}' AT <FONT COLOR="#209747">'$(date +%x) $(date +%X)'. <FONT COLOR="#f9b233">**THE WEBSITE IS SLOW**</p></h4>')
+                    CHECKFIRST="<[FAIL]>"
+                    TIMEFIRST=[${TIME}s]
+                fi
+            fi
+            TIME=$yellowColour[${TIME}s]$endColour
+            CHECK=$redColour"<[FAIL]>"
         else
             # site ok (< 1s)
-            COLOR "\e[0;34m"
+            if [ $CICLO -eq "1" ]
+            then
+                if [ $2 -eq "1" ]
+                then
+                    CHECKFIRST="<[OK]>"
+                    TIMEFIRST=[${TIME}s]
+                fi
+            fi
+            TIME=$blueColour[${TIME}s]$endColour
         fi
-        # Time to load and summary
-        echo -en " [${TIME}s]" "${turquoiseColour}[*]Check $(date +%x) $(date +%X)->${yellowColour}${site[$element]}${purpleColour} ${greenColour}C=$CICLO ${redColour}E=${array_error[$element]} ${turquoiseColour}L=${array_l[$element]} ${redColour}L3=${array_l3[$element]}${endColour}\n"
-        COLOR $endColour
+        # send evidence for the first check
+        if [ $CICLO -eq "1" ]
+        then
+            if [ $2 -eq "1" ]
+            then
+                take_evidence ${site[$element]} ${DATECHECK}
+                SENDEVIDENCE="1"
+                # Write in log and make a conclusion
+                echo -en "${HTTP_CODEFIRST}" "${TIMEFIRST}" "[*]Checking $(date +%x) $(date +%X)--> ${site[$element]} [*] C=$CICLO -> S=${array_l[$element]} S5=${array_l5[$element]} E=${array_error[$element]} ${CHECKFIRST}\n" >> wwwevidence/$DATECHECK/logwebstatusfirst${DATECHECK}.log                  
+            fi
+        fi
+        # Write in log
+        echo -en "${HTTP_CODE}" "${TIME}" "${turquoiseColour}[*]Checking $(date +%x) $(date +%X)--> ${yellowColour}${site[$element]}${purpleColour} [*] ${greenColour}C=$CICLO -> ${turquoiseColour}S=${array_l[$element]} ${yellowColour}S5=${array_l5[$element]} ${redColour}E=${array_error[$element]} ${CHECK} ${endColour}\n" >> logwebstatus.log  
     done 
-    echo -en "\n${turquoiseColour}***********************************************************************${endColour}"
-    if [ $SITES_DOWN -gt 0 ]; then
-        # Time to verify what happend and don't full with desktop alerts
+    # Create unique pdf and delete other -- compres file ans send email
+    if [ $SENDEVIDENCE -eq "1" ]
+    then
+        SENDEVIDENCE="0"
+        CAPT_FILEFINALPDF=file$DATECHECK.pdf
+        #merge files pfd
+        echo -en "${lightgreenColour}[*]Marge PDF ${lightblueColour}${0}$(date +%x) $(date +%X) --> ${yellowColour}${*}${endColour}\n"
+        qpdf --empty --pages $(for i in wwwevidence/$DATECHECK/*.pdf; do echo $i 1-z; done) -- wwwevidence/$DATECHECK/$CAPT_FILEFINALPDF
+        #delete files evidence
+        echo -en "${lightgreenColour}[*]Delete PDF ${lightblueColour}${0}$(date +%x) $(date +%X) --> ${yellowColour}${*}${endColour}\n"
+        rm wwwevidence/$DATECHECK/evidence*
+        #open de file
+        echo -en "${lightgreenColour}[*]Open Merge PDF ${lightblueColour}${0}$(date +%x) $(date +%X) --> ${yellowColour}${*}${endColour}\n"
+        evince wwwevidence/$DATECHECK/$CAPT_FILEFINALPDF
+        # compress pdf and html
+        echo -en "${lightgreenColour}[*]Compress PDF - HTML files ${lightblueColour}${0}$(date +%x) $(date +%X) --> ${yellowColour}${*}${endColour}\n"
+        7z a -mx=9 wwwevidence/$DATECHECK/PDF${DATECHECK}.7z wwwevidence/$DATECHECK/*.pdf >/dev/null
+        7z a -mx=9 wwwevidence/$DATECHECK/HTML${DATECHECK}.7z wwwevidence/$DATECHECK/*.html -sdel >/dev/null
+        # if the variables have information, the conclusion is modified
+        CONCLUSION=$(echo -e '<h2><FONT COLOR="#003e6f">WEBCHECKING</h2><strong><p><FONT COLOR=black>Normal Status</p></strong><p>When reviewing <strong><FONT COLOR="#3396FF">"'"$web_len"'"</strong><FONT COLOR=black> websites: <h4><strong>NO PROBLEMS WERE FOUND</strong></h4> So the <strong>conclusion</strong> is that the monitored websites are in <strong><FONT COLOR="#209747">NORMAL CONDITION</strong>.</p>')
+        if [ ${#FIRSTCHECKERROR} -gt "0" ]
+        then
+            CONCLUSION=$(echo -e '<h2><FONT COLOR="#003e6f">WEBCHECKING</h2><strong><h1><p><FONT COLOR="#c04242">Alert Status</p></h1><FONT COLOR=black></strong><p>When reviewing <strong><FONT COLOR="#0f70b7">"'"$web_len"'"</strong><FONT COLOR=black> websites: <h4><strong><FONT COLOR="#c04242">PROBLEMS WERE FOUND</strong></h4><FONT COLOR=black> So the <strong>conclusion</strong> is that the monitored websites are in <strong><FONT COLOR="#c04242">PROBLEM CONDITION</strong>.</p><h2><FONT COLOR="#c04242">Serious errors were found in the monitored websites, it is urgent that the websites be REVIEWED IMMEDATELY</h2>'$FIRSTCHECKERROR$FIRSTCHESCKVERYLOW$FIRSTCHECKSLOW)
+        elif [ ${#FIRSTCHESCKVERYLOW} -gt "0" ]
+        then
+            CONCLUSION=$(echo -e '<h2><FONT COLOR="#003e6f">WEBCHECKING</h2><strong><h1><p><FONT COLOR="#c04242">Alert Status</p></h1><FONT COLOR=black></strong><p>When reviewing <strong><FONT COLOR="#0f70b7">"'"$web_len"'"</strong><FONT COLOR=black> websites: <h4><strong><FONT COLOR="#c04242">PROBLEMS WERE FOUND</strong></h4><FONT COLOR=black> So the <strong>conclusion</strong> is that the monitored websites are in <strong><FONT COLOR="#c04242">PROBLEM CONDITION</strong>.</p><h2><FONT COLOR="#c04242">There is a slowness of more than 5 seconds in opening the monitored websites, it is urgent that the websites are REVIEWED IMMEDATELY</h2>'$FIRSTCHESCKVERYLOW$FIRSTCHECKSLOW)
+        elif [ ${#FIRSTCHECKSLOW} -gt "0" ]
+        then
+            CONCLUSION=$(echo -e '<h2><FONT COLOR="#003e6f">WEBCHECKING</h2><strong><h1><p><FONT COLOR="#f9b233">Alert Status</p></h1><FONT COLOR=black></strong><p>When reviewing <strong><FONT COLOR="#0f70b7">"'"$web_len"'"</strong><FONT COLOR=black> websites: <h4><strong><FONT COLOR="#f9b233">PROBLEMS WERE FOUND</strong></h4><FONT COLOR=black> So the <strong>conclusion</strong> is that the monitored websites are in <strong><FONT COLOR="#f9b233">PROBLEM CONDITION</strong>.</p><h2><FONT COLOR="#f9b233">There is a slowness of more than 1 second in opening the monitored websites, it is important to CHECK THE WEBSITES</h2>'$FIRSTCHECKSLOW)
+        fi        
+        #sudo apt install mailutils
+        #send email 
+        #https://tonyteaches.tech/postfix-gmail-smtp-on-ubuntu/
+        #https://www.drupaladicto.com/actualidad/como-instalar-y-configurar-postfix-como-servidor-smtp-solo-de-envio-en-ubuntu-2004 Work but google block my ip
+        echo -en "${lightgreenColour}[*]Start Send Evidence ${lightblueColour}${0}$(date +%x) $(date +%X) --> ${yellowColour}${*}${endColour}\n"
+        emailcorreo=$(<email)
+        mutt -e "set content_type=text/html" -s "WEBServer CHECKING $DATECHECK" -a wwwevidence/$DATECHECK/HTML${DATECHECK}.7z -a wwwevidence/$DATECHECK/PDF${DATECHECK}.7z -a wwwevidence/$DATECHECK/logwebstatusfirst${DATECHECK}.log -- ${emailcorreo} <<< ${CONCLUSION}
+        echo -en "${lightgreenColour}[*]End Send Evidence ${lightblueColour}${0}$(date +%x) $(date +%X) --> ${yellowColour}${*}${endColour}\n"
+        #Only for take and send Evidence
+        if [ ${3} -eq "1" ]
+        then
+            echo -en "${lightgreenColour}[*]Only for take and send Evidence ${lightblueColour}${0}$(date +%x) $(date +%X) --> ${yellowColour}${*}${endColour}\n"
+            ctrl_c
+        fi
+    fi
+    #echo -en "\n${turquoiseColour}***********************************************************************${endColour}"
+    if [ $SITES_DOWN -gt 0 ]; then   
         sleep 60
     else
         if [ -z $1 ]
         then
             sleep 5
-        
         else
-            sleep $1
+            if [ $CICLO -eq "1" ]
+            then
+                sleep 0
+            else
+                sleep $1
+            fi 
         fi
     fi
     CICLO=$((CICLO+1))
