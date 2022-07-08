@@ -1,18 +1,43 @@
 # check_www_site_bash.sh
 
-# Estudios realizados
+## Started 🚀
 
-## Comenzando 🚀
+Script in **bash**. Checks an array of sites to verify if the sites are up, down or if they take a long time to open the site. 
+The bash have three parameters: 
+- The time to check the sites.
+- Flag to create evidence.
+- Flag only create and send the evidence.
 
-Script in bash. Checks an array of sites to verify if the sites are up, down or if they take a long time to open the site. 
-You can send as optional parameter the time to check the sites, default is 5 seconds.  
-Improve coding [https://gist.github.com/DnaX/4597186](https://gist.github.com/DnaX/4597186)
+> Improve coding [https://gist.github.com/DnaX/4597186](https://gist.github.com/DnaX/4597186)
 
-### Pre-requisitos 📋
 
-I need 
+### Examples
 
+```sh
+    bash webstatus.sh 60 0 0 
+```
+> Checks every 60 seconds without creating tests.
+
+```sh
+    bash webstatus.sh 60 1 0 
+```
+> Checks every 60 seconds with creating tests and send email with the evidence.
+
+```sh
+    bash webstatus.sh 60 1 1 
+```
+> Creating tests and send email with the evidence, no monitoring.
+
+
+## Pre-requisitos 📋
+
+Install **mutt**
+
+```sh
+    sudo apt update
     sudo apt install mutt
+```
+> Mutt is a sophisticated text-based Mail User Agent.
 
 ```
 Da un ejemplo
