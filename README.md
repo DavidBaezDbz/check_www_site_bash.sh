@@ -207,68 +207,96 @@ bash webstatus.sh 20 1 0
 > Checks every 20 seconds with creating tests and send email with the evidence.
 > 
 
-## Ejecutando las pruebas ⚙️
+## Test ⚙️
 
-_Explica como ejecutar las pruebas automatizadas para este sistema_
+### Example 1
 
-### Analice las pruebas end-to-end 🔩
+Execute the bash
 
-_Explica que verifican estas pruebas y por qué_
-
+```sh
+    bash webstatus.sh 60 0 0 
 ```
-Da un ejemplo
+> Checks every 60 seconds without creating tests.
+
+Check the log
+
+```sh
+    tail -f logwebstatus.log  
+```
+Check the log
+
+```sh
+tail -f logwebstatus.log | grep FAIL
 ```
 
-### Y las pruebas de estilo de codificación ⌨️
+### Example 2
 
-_Explica que verifican estas pruebas y por qué_
+Execute the bash
 
+```sh
+    bash webstatus.sh 60 1 0 
 ```
-Da un ejemplo
+> Checks every 60 seconds with creating tests and send email.
+
+Check the log
+
+```sh
+    tail -f logwebstatus.log  
+```
+Check the log
+
+```sh
+tail -f logwebstatus.log | grep FAIL
+```
+Check the directory of evidence
+
+```sh
+ll wwwevidence/070822140254/
+```
+> The last directory is the datetme when you create the evidence
+
+**IF YOU HAVE PROBLEMS WITH THE EMAIL**
+
+Check the `postfix` service
+
+```sh
+sudo service postfix status
+```
+If the service is stop state, execute `sudo service postfix start`
+
+if bash does not send mail, check logs
+
+some commands
+```sh
+mail
+# where you set up the postfix records /var/log/postfix.log
+tail -f /var/log/postfix.log
+#
+journalctl -u postfix@-.service
 ```
 
-## Despliegue 📦
-
-_Agrega notas adicionales sobre como hacer deploy_
-
-## Construido con 🛠️
-
-_Menciona las herramientas que utilizaste para crear tu proyecto_
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - El framework web usado
-* [Maven](https://maven.apache.org/) - Manejador de dependencias
-* [ROME](https://rometools.github.io/rome/) - Usado para generar RSS
-
-## Contribuyendo 🖇️
-
-Por favor lee el [CONTRIBUTING.md](https://gist.github.com/villanuevand/xxxxxx) para detalles de nuestro código de conducta, y el proceso para enviarnos pull requests.
 
 ## Wiki 📖
 
-Puedes encontrar mucho más de cómo utilizar este proyecto en nuestra [Wiki](https://github.com/tu/proyecto/wiki)
+Puedes encontrar mucho más de cómo utilizar este proyecto en nuestra [Wiki]([https://github.com/tu/proyecto/wiki](https://github.com/DavidBaezDbz/check_www_site_bash.sh/wiki))
 
-## Versionado 📌
+## Version 📌
 
-Usamos [SemVer](http://semver.org/) para el versionado. Para todas las versiones disponibles, mira los [tags en este repositorio](https://github.com/tu/proyecto/tags).
+In the fiture a will use [SemVer](http://semver.org/) for versioning. For all available versions, see the [tags en este repositorio](https://github.com/DavidBaezDbz/check_www_site_bash.sh/tags).
 
-## Autores ✒️
+## Authors ✒️🖇️🛠️
 
-_Menciona a todos aquellos que ayudaron a levantar el proyecto desde sus inicios_
 
 * **David Baez** - *Trabajo Inicial* - [DBZ repository](https://github.com/DavidBaezDbz) - [David Baez](https://davidbaezdbz.github.io/)
 
 
+## License 📄
 
+Working on this  - see the file [LICENSE.md](LICENSE.md) for details
 
-También puedes mirar la lista de todos los [contribuyentes](https://github.com/your/project/contributors) quíenes han participado en este proyecto. 
+## Expressions of Gratitude 🎁
 
-## Licencia 📄
-
-Este proyecto está bajo la Licencia (Tu Licencia) - mira el archivo [LICENSE.md](LICENSE.md) para detalles
-
-## Expresiones de Gratitud 🎁
-
-* Comenta a otros sobre este proyecto 📢
-* Invita una cerveza 🍺 o un café ☕ a alguien del equipo. 
-* Da las gracias públicamente 🤓.
-* etc.
+* Tell others about this project 📢
+* Invite for a beer 🍺 or a coffee ☕ to someone on the team.. 
+* Publicly thanks 🤓.
+* Anything you want.
