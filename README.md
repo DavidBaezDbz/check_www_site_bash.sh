@@ -1,5 +1,6 @@
 # check_www_site_bash.sh
 
+
 ## Started 🚀
 
 Script in **bash**. Checks an array of sites to verify if the sites are up, down or if they take a long time to open the site. 
@@ -9,7 +10,6 @@ The bash have three parameters:
 - Flag only create and send the evidence.
 
 > Improve coding [https://gist.github.com/DnaX/4597186](https://gist.github.com/DnaX/4597186)
-
 
 ### Examples
 
@@ -27,6 +27,7 @@ The bash have three parameters:
     bash webstatus.sh 60 1 1 
 ```
 > Creating tests and send email with the evidence, no monitoring.
+
 
 
 ## Pre-requisitos 📋
@@ -85,7 +86,15 @@ Install **CUTYCAPT**
 [http://cutycapt.sourceforge.net/](http://cutycapt.sourceforge.net/)
 
 
-### EVIANCE
+### EVINCE
+
+Install **evince**
+
+```sh
+    sudo apt update
+    sudo apt install evince
+```
+> pdf file viewer
 
 ### FIREFOX
 
@@ -119,6 +128,38 @@ Install **wsl-notify-send**
 > `wsl-notify-send` provides a Windows executable that is intended to be a replacement for the [Linux `notify-send` utility](https://ss64.com/bash/notify-send.html).
 
 [https://github.com/stuartleeks/wsl-notify-send](https://github.com/stuartleeks/wsl-notify-send)
+
+### QPDF
+
+Install **qpdf**
+
+```sh
+    sudo apt update
+    sudo apt install qpdf
+```
+> QPDF is a program and C++ library for structural, content-preserving transformations on PDF files
+
+[https://qpdf.readthedocs.io/en/stable/installation.html](https://qpdf.readthedocs.io/en/stable/installation.html)
+
+### 7Z
+
+Install **7z**
+
+```sh
+    sudo apt update
+    sudo apt install p7zip-full
+```
+
+### POSTIFIX
+
+Install **postfix**
+
+```sh
+    sudo apt update
+    sudo apt-get install postfix
+```
+
+
 
 
 ## Instalación 🔧
