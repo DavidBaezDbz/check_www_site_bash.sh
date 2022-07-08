@@ -51,8 +51,19 @@ Install **wsl2** on your **windows 11**
 
 [Microsoft Documentation](https://docs.microsoft.com/es-es/windows/wsl/install)
 
+### CURL
+
+Install **curl**
+
+```sh
+    sudo apt update
+    sudo apt install curl
+```
+> The command downloads files that are served with FTP, HTTP or HTTPS protocol. It’s an amalgamation of the words World Wide Web and the word get to form wget.
+
 
 ### MUTT
+
 Install **mutt**
 
 ```sh
@@ -61,11 +72,56 @@ Install **mutt**
 ```
 > Mutt is a sophisticated text-based Mail User Agent.
 
-```
-Da un ejemplo
-```
+## CUTYCAPT
 
-### Instalación 🔧
+Install **CUTYCAPT**
+
+```sh
+    sudo apt update
+    sudo apt install cutycapt
+```
+> CutyCapt is a small cross-platform command-line utility to capture WebKit's rendering of a web page into a variety of vector and bitmap formats, including SVG, PDF, PS, PNG, JPEG, TIFF, GIF, and BMP. See IECapt for a similar tool based on Internet Explorer.
+
+[http://cutycapt.sourceforge.net/](http://cutycapt.sourceforge.net/)
+
+
+### EVIANCE
+
+### FIREFOX
+
+Install **FIREFOX**
+
+```sh
+    sudo apt update
+    sudo apt install firefox
+```
+[https://support.mozilla.org/en-US/kb/install-firefox-linux](https://support.mozilla.org/en-US/kb/install-firefox-linux)
+
+### WGET
+
+Install **wget**
+
+```sh
+    sudo apt update
+    sudo apt install wget
+    wget --version
+```
+> The command downloads files that are served with FTP, HTTP or HTTPS protocol. It’s an amalgamation of the words World Wide Web and the word get to form wget.
+
+### WSL-NOTIFY-SEND
+
+Install **wsl-notify-send**
+
+- Download your version [https://github.com/stuartleeks/wsl-notify-send/releases](https://github.com/stuartleeks/wsl-notify-send/releases)
+- Extract wsl-notify-send.exe from the downloaded zip and ensure that it is in your `PATH`
+- **Testing** In WSL, run `notify-send "Hello from WSL"` and you should see a Windows toast notification!
+
+> `wsl-notify-send` provides a Windows executable that is intended to be a replacement for the [Linux `notify-send` utility](https://ss64.com/bash/notify-send.html).
+
+[https://github.com/stuartleeks/wsl-notify-send](https://github.com/stuartleeks/wsl-notify-send)
+
+
+## Instalación 🔧
 
 _Una serie de ejemplos paso a paso que te dice lo que debes ejecutar para tener un entorno de desarrollo ejecutandose_
 
