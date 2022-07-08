@@ -31,6 +31,28 @@ The bash have three parameters:
 
 ## Pre-requisitos 📋
 
+### WSL
+
+Install **wsl2** on your **windows 11**
+
+1. Run Windows Terminal as administrator.
+
+```
+    wsl --install
+```
+2. Install a GNU/Linux distribution from those available in the Microsoft application store.
+
+[Ubuntu 20.04](https://apps.microsoft.com/store/detail/ubuntu-2204-lts/9PN20MSR04DW?hl=es-co&gl=CO)
+> The tests were on this version
+
+3. Restart our computer to be able to start the Ubuntu installation.
+
+4. Running the Ubuntu application and follow the steps
+
+[Microsoft Documentation](https://docs.microsoft.com/es-es/windows/wsl/install)
+
+
+### MUTT
 Install **mutt**
 
 ```sh
