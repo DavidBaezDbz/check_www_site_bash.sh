@@ -332,7 +332,7 @@ In the fiture a will use [SemVer](http://semver.org/) for versioning. For all av
 ## Authors ✒️🖇️🛠️
 
 
-* **David Baez** - *Initial Work* - [DBZ repository](https://github.com/DavidBaezDbz) - [David Baez](https://davidbaezdbz.github.io/)
+* **David Baez Sanchez** - *Initial Work* - [DBZ repository](https://github.com/DavidBaezDbz) - [David Baez](https://davidbaezdbz.github.io/)
 
 
 ## License 📄
