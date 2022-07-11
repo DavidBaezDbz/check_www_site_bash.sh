@@ -1,7 +1,7 @@
 #!/bin/bash
 # Parameteres {1} = Duration on check  {2} = Send Evidence  {3} = only take a evidence and send and exit to the bach
 # Basic Functions and parameters
-if [ "$4" == "Debug" ] ; then set -x ; fi
+if [ "$5" == "Debug" ] ; then set -x ; fi
 clear
 # color costants
 black="\e[0;30m\033[1m"
@@ -26,9 +26,9 @@ function exit_1(){
     exit 1
 }
 #Validate the number of parameters
-if [ "$#" -lt 3 ]  
+if [ "$#" -lt 4 ]  
 then
-    echo -en "${redColour}[*]3 argument required. ${greenColour} Date: $(date +%x) $(date +%X) --> These are the parameters do you type: ${yellowColour}${*}${endColour}\n"
+    echo -en "${redColour}[*] Four (4) arguments required. ${greenColour} Date: $(date +%x) $(date +%X) --> These are the parameters do you type: ${yellowColour}${*}${endColour}\n"
     exit_1
 fi
 if ! [[ $1 =~ ^[0-9]+$ ]]
@@ -144,7 +144,35 @@ function fill_array(){
         array_l5[${#array_l5[@]}]=0
     done
 }
+function dependencies(){
+    counter=0
+    sleep 0.3
+	echo -e "${yellowColour}[*]${endColour}${grayColour} Checking required programs...\n"
+    sleep 0.2
+    # 
+	dependencias=(curl mutt cutycapt evince firefox wget /mnt/c/DBZ/DBZ/bash/notify-send/wsl-notify-send.exe qpdf 7z postfix)
+	for programa in "${dependencias[@]}"; do
+		if [ "$(command -v $programa)" ]; then
+			echo -e ". . . . . . . . ${blueColour}[V]${endColour}${grayColour} The tool ${endColour}${yellowColour} $programa${endColour}${grayColour} is installed"
+			let counter+=1
+		else
+			echo -e "${redColour}[X]${endColour}${grayColour} La herramienta${endColour}${yellowColour} $programa${endColour}${grayColour} is not installed"
+		fi; sleep 0.2
+	done
+	if [ "$(echo $counter)" == "10" ]; then
+		echo -e "\n${yellowColour}[*]${endColour}${grayColour} Starting monitoring...\n"
+        sleep 0.2
+	else
+		echo -e "\n${redColour}[!]${endColour}${grayColour} Is it necessary to have the (curl mutt cutycapt evince firefox wget wsl-notify-send qpdf 7z postifix) tools installed to run this script${endColour}\n"
+		tput cnorm; exit_1
+	fi
+}
 bannerDBZ
+# I Check the software do you need to run this script
+if [ "$4" == "1" ] 
+then
+    dependencies
+fi
 # Check website array
 readarray -t site < websitecheck
 # Array para guardar errores

@@ -4,11 +4,11 @@
 - [check_www_site_bash.sh](#check_www_site_bashsh)
   - [Started 🚀](#started-)
     - [Examples](#examples)
-  - [Pre-requisitos 📋](#pre-requisitos-)
+  - [Prerequisites 📋](#prerequisites-)
     - [WSL](#wsl)
     - [CURL](#curl)
     - [MUTT](#mutt)
-  - [CUTYCAPT](#cutycapt)
+    - [CUTYCAPT](#cutycapt)
     - [EVINCE](#evince)
     - [FIREFOX](#firefox)
     - [WGET](#wget)
@@ -33,29 +33,49 @@ The bash have three parameters:
 - The time to check the sites.
 - Flag to create evidence.
 - Flag only create and send the evidence.
+- Flag to verify the prerequisites.
 
 > Improve coding [https://gist.github.com/DnaX/4597186](https://gist.github.com/DnaX/4597186)
 
 ### Examples
 
 ```sh
-    bash webstatus.sh 60 0 0 
+    bash check_sites_www.sh 60 0 0 0
 ```
-> Checks every 60 seconds without creating tests.
+> Checks every 60 seconds without creating tests and don't validate the prerequisites.
 
 ```sh
-    bash webstatus.sh 60 1 0 
+    bash check_sites_www.sh 60 1 0 0
 ```
-> Checks every 60 seconds with creating tests and send email with the evidence.
+> Checks every 60 seconds with creating tests and send email with the evidence and don't validate the prerequisites.
 
 ```sh
-    bash webstatus.sh 60 1 1 
+    bash check_sites_www.sh 60 1 1 0
 ```
-> Creating tests and send email with the evidence, no monitoring.
+> Creating tests and send email with the evidence, no monitoring and don't validate the prerequisites.
+
+```sh
+    bash check_sites_www.sh 60 1 1 1
+```
+> Creating tests and send email with the evidence, no monitoring validate the prerequisites.
 
 
 
-## Pre-requisitos 📋
+
+## Prerequisites 📋
+
+**The script validate the existense of the software:**
+
+1. curl 
+2. mutt 
+3. cutycapt 
+4. evince 
+5. firefox 
+6. wget 
+7. /mnt/c/DBZ/DBZ/bash/notify-send/wsl-notify-send.exe <span style="color:red">**Remember that the location changes depending on where you are located the software**</span>.
+8. qpdf 
+9. 7z 
+10. postfix
 
 ### WSL
 
@@ -98,7 +118,7 @@ Install **mutt**
 ```
 > Mutt is a sophisticated text-based Mail User Agent.
 
-## CUTYCAPT
+### CUTYCAPT
 
 Install **CUTYCAPT**
 
@@ -205,7 +225,7 @@ chmod a+x check_sites_www.sh
 or execute whit `bash` command
 
 ```sh
-bash webstatus.sh 30 1 0
+bash check_sites_www.sh 30 1 0 0
 ```
 > Checks every 30 seconds with creating tests and send email with the evidence.
 
@@ -227,7 +247,7 @@ https://www.zzzzzz.com
 Example
 
 ```sh
-bash webstatus.sh 20 1 0
+bash check_sites_www.sh 20 1 0 0
 ```
 > Checks every 20 seconds with creating tests and send email with the evidence.
 > 
@@ -239,9 +259,9 @@ bash webstatus.sh 20 1 0
 Execute the bash
 
 ```sh
-    bash webstatus.sh 60 0 0 
+    bash check_sites_www.sh 60 0 0 1
 ```
-> Checks every 60 seconds without creating tests.
+> Checks every 60 seconds without creating tests and check prerequisites. 
 
 Check the log
 
@@ -259,7 +279,7 @@ tail -f logwebstatus.log | grep FAIL
 Execute the bash
 
 ```sh
-    bash webstatus.sh 60 1 0 
+    bash check_sites_www.sh 60 1 0 0
 ```
 > Checks every 60 seconds with creating tests and send email.
 
