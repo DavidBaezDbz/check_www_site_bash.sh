@@ -21,9 +21,58 @@ grayColour="\e[0;37m\033[1m"
 white="\e[1;37m\033[1m"
 endColour="\033[0m\e[0m"
 RC=0
+function exit_1(){
+    echo -e "${yellowColour}[*]${endColour}${grayColour} Leaving ${greenColour}${0}${grayColour} ..."
+    exit 1
+}
+#Validate the number of parameters
+if [ "$#" -lt 3 ]  
+then
+    echo -en "${redColour}[*]3 argument required. ${greenColour} Date: $(date +%x) $(date +%X) --> These are the parameters do you type: ${yellowColour}${*}${endColour}\n"
+    exit_1
+fi
+if ! [[ $1 =~ ^[0-9]+$ ]]
+then
+    echo -en "${redColour}[*]The first parameter is not a number, the first parameter is ${yellowColour}${1}. ${greenColour} Date: $(date +%x) $(date +%X) --> These are the parameters do you type: ${yellowColour}${*}${endColour}\n"
+    exit_1
+else
+    if ! [[ $1 -ge 0  && $1 -le 1200 ]]
+    then
+        echo -en "${redColour}[*]The first parameter ${greenColour}is not between 0 to 1200${redColour}, but the first parameter is ${yellowColour}${1}. ${greenColour} Date: $(date +%x) $(date +%X) --> These are the parameters do you type: ${yellowColour}${*}${endColour}\n"
+        exit_1
+    fi
+fi
+if ! [[ $2 =~ ^[0-9]+$ ]]
+then
+   echo -en "${redColour}[*]The second parameter is not a number, the second parameter is ${yellowColour}${2}. ${greenColour} Date: $(date +%x) $(date +%X) --> These are the parameters do you type: ${yellowColour}${*}${endColour}\n"
+   exit_1
+else
+    if ! [[ $2 -ge 0  && $2 -le 1 ]]
+    then
+        echo -en "${redColour}[*]The second parameter ${greenColour}is not between 0 to 1${redColour}, but the second parameter is ${yellowColour}${2}. ${greenColour} Date: $(date +%x) $(date +%X) --> These are the parameters do you type: ${yellowColour}${*}${endColour}\n"
+        exit_1
+    fi
+fi
+if ! [[ $3 =~ ^[0-9]+$ ]]
+then
+   echo -en "${redColour}[*]The thrid parameter is not a number, the thrid parameter is ${yellowColour}${3}. ${greenColour} Date: $(date +%x) $(date +%X) --> These are the parameters do you type: ${yellowColour}${*}${endColour}\n"
+   exit_1
+else
+    if ! [[ $3 -ge 0  && $3 -le 1 ]]
+    then
+        echo -en "${redColour}[*]The thrid parameter ${greenColour}is not between 0 to 1${redColour}, but the thrid parameter is ${yellowColour}${3}. ${greenColour} Date: $(date +%x) $(date +%X) --> These are the parameters do you type: ${yellowColour}${*}${endColour}\n"
+        exit_1
+    fi
+fi
+#Validate Parameters when take evidence
+if [ "$2" == "0" ] &&  [ "$3" == "1" ]
+then 
+    echo -en "${lightgreenColour}[*]You choose take and send Evidence but the second parameter is ${yellowColour}${2}. ${endColour} ${lightgreenColour} TThe second parametes is has to be ${yellowColour}1${greenColour} Date: $(date +%x) $(date +%X) --> These are the parameters do you type: ${yellowColour}${*}${endColour}\n"
+    exit_1
+fi
 trap ctrl_c INT
 function ctrl_c(){
-	echo -e "\n\n${yellowColour}[*]${endColour}${grayColour} Leaving ${greenColour}${0}${grayColour} ...\n${endColour}${blueColour}(Ctrl+C)${endColour}"
+	echo -e "\n\n${yellowColour}[*]${endColour}${grayColour} Leaving ${greenColour}${0}${grayColour} ..."
     if [ -f wwwevidence/$DATECHECK/*.pdf ]
     then
         rm wwwevidence/$DATECHECK/*.pdf
@@ -31,11 +80,6 @@ function ctrl_c(){
     echo -en "${greenColour}****************************************************************** ${lightpurpleColour}Completed $(date +%x) $(date +%X)${greenColour} ******************************************************************${endColour}\n" >> logwebstatus.log
 	exit 0
 }
-function Validate_Parameters () {
-    echo -en >&2 "$@"
-    exit 1
-}
-[ "$#" -ge 3 ] || Validate_Parameters "${redColour}3 argument required, $# provided${endColour}"
 function bannerDBZ(){
 	echo -e "\n${redColour}'||''|.                     ||       '||  '||''|.                           '||''|.   '||''|.   |'''''||  "
         sleep 0.05
@@ -101,8 +145,6 @@ function fill_array(){
     done
 }
 bannerDBZ
-# Verify evidence directoryb
-archivo_evidencias
 # Check website array
 readarray -t site < websitecheck
 # Array para guardar errores
@@ -113,10 +155,12 @@ fill_array $web_len
 CICLO=1
 #DATECHECK=$(date +%x)-$(date +%X)
 DATECHECK=$(echo $(date +%x)$(date +%X) | tr "/" "-" | sed s/://g | sed s/https//g | sed s/http//g | sed s/-//g | sed s/'#'//g)
-archivo_evidencias_date $DATECHECK
 if [ ${2} -eq "1" ]
 then
     SENDEVIDENCE="1"
+    # Verify evidence directoryb
+    archivo_evidencias
+    archivo_evidencias_date $DATECHECK
 else
     SENDEVIDENCE="0"
 fi
@@ -149,7 +193,7 @@ do
             then
                 if [ $2 -eq "1" ]
                 then
-                    FIRSTCHECKERROR=$(echo -e '<h4><p><FONT COLOR="#003e6f">'$FIRSTCHECKERROR'TERROR CODE ON THE WEBSITE IS: <FONT COLOR="#c04242">['$HTTP_CODE's]<FONT COLOR="#003e6f"> ON '${site[$element]}' AT <FONT COLOR="#209747">'$(date +%x) $(date +%X)'. <FONT COLOR="#c04242">**THE WEBSITE IS DOWN**</p></h4>')
+                    FIRSTCHECKERROR=$(echo -e $FIRSTCHECKERROR'<h4><p><FONT COLOR="#003e6f">ERROR CODE ON THE WEBSITE IS: <FONT COLOR="#c04242">['$HTTP_CODE's]<FONT COLOR="#003e6f"> ON '${site[$element]}' AT <FONT COLOR="#209747">'$(date +%x) $(date +%X)'. <FONT COLOR="#c04242">**THE WEBSITE IS DOWN**</p></h4>')
                     HTTP_CODEFIRST=$HTTP_CODE
                     CHECKFIRST="<[FAIL]>"
                 fi
@@ -178,7 +222,7 @@ do
             then
                 if [ $2 -eq "1" ]
                 then
-                    FIRSTCHESCKVERYLOW=$(echo -e '<h4><p><FONT COLOR="#003e6f">'$FIRSTCHESCKVERYLOW'TIME IS <FONT COLOR="#c04242">['$TIME's]<FONT COLOR="#003e6f"> LOAD THE WEBSITE '${site[$element]}' AT <FONT COLOR="#209747">'$(date +%x) $(date +%X)'. <FONT COLOR="#c04242">**THE WEBSITE IS VERY SLOW**</p></h4>')
+                    FIRSTCHESCKVERYLOW=$(echo -e $FIRSTCHESCKVERYLOW'<h4><p><FONT COLOR="#003e6f">TIME IS <FONT COLOR="#c04242">['$TIME's]<FONT COLOR="#003e6f"> LOAD THE WEBSITE '${site[$element]}' AT <FONT COLOR="#209747">'$(date +%x) $(date +%X)'. <FONT COLOR="#c04242">**THE WEBSITE IS VERY SLOW**</p></h4>')
                     TIMEFIRST=[${TIME}s]
                     CHECKFIRST="<[FAIL]>"
                 fi
@@ -193,7 +237,7 @@ do
             then
                 if [ $2 -eq "1" ]
                 then
-                    FIRSTCHECKSLOW=$(echo -e '<h4><p><FONT COLOR="#003e6f">'$FIRSTCHECKSLOW'TIME IS <FONT COLOR="#f9b233">['$TIME's]<FONT COLOR="#003e6f"> LOAD THE WEBSITE '${site[$element]}' AT <FONT COLOR="#209747">'$(date +%x) $(date +%X)'. <FONT COLOR="#f9b233">**THE WEBSITE IS SLOW**</p></h4>')
+                    FIRSTCHECKSLOW=$(echo -e $FIRSTCHECKSLOW'<h4><p><FONT COLOR="#003e6f">TIME IS <FONT COLOR="#f9b233">['$TIME's]<FONT COLOR="#003e6f"> LOAD THE WEBSITE '${site[$element]}' AT <FONT COLOR="#209747">'$(date +%x) $(date +%X)'. <FONT COLOR="#f9b233">**THE WEBSITE IS SLOW**</p></h4>')
                     CHECKFIRST="<[FAIL]>"
                     TIMEFIRST=[${TIME}s]
                 fi
@@ -264,6 +308,7 @@ do
         emailcorreo=$(<email)
         mutt -e "set content_type=text/html" -s "WEBServer CHECKING $DATECHECK" -a wwwevidence/$DATECHECK/HTML${DATECHECK}.7z -a wwwevidence/$DATECHECK/PDF${DATECHECK}.7z -a wwwevidence/$DATECHECK/logwebstatusfirst${DATECHECK}.log -- ${emailcorreo} <<< ${CONCLUSION}
         echo -en "${lightgreenColour}[*]End Send Evidence ${lightblueColour}${0}$(date +%x) $(date +%X) --> ${yellowColour}${*}${endColour}\n"
+        bannerDBZ
         #Only for take and send Evidence
         if [ ${3} -eq "1" ]
         then

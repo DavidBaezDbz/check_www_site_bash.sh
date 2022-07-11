@@ -1,6 +1,31 @@
 # check_www_site_bash.sh
 
 
+- [check_www_site_bash.sh](#check_www_site_bashsh)
+  - [Started 🚀](#started-)
+    - [Examples](#examples)
+  - [Pre-requisitos 📋](#pre-requisitos-)
+    - [WSL](#wsl)
+    - [CURL](#curl)
+    - [MUTT](#mutt)
+  - [CUTYCAPT](#cutycapt)
+    - [EVINCE](#evince)
+    - [FIREFOX](#firefox)
+    - [WGET](#wget)
+    - [WSL-NOTIFY-SEND](#wsl-notify-send)
+    - [QPDF](#qpdf)
+    - [7Z](#7z)
+    - [POSTIFIX WITH GMAIL](#postifix-with-gmail)
+  - [Instalación 🔧](#instalación-)
+  - [Test ⚙️](#test-️)
+    - [Example 1](#example-1)
+    - [Example 2](#example-2)
+  - [Wiki 📖](#wiki-)
+  - [Version 📌](#version-)
+  - [Authors ✒️🖇️🛠️](#authors-️️️)
+  - [License 📄](#license-)
+  - [Expressions of Gratitude 🎁](#expressions-of-gratitude-)
+
 ## Started 🚀
 
 Script in **bash**. Checks an array of sites to verify if the sites are up, down or if they take a long time to open the site. 
@@ -278,7 +303,7 @@ journalctl -u postfix@-.service
 
 ## Wiki 📖
 
-Puedes encontrar mucho más de cómo utilizar este proyecto en nuestra [Wiki]([https://github.com/tu/proyecto/wiki](https://github.com/DavidBaezDbz/check_www_site_bash.sh/wiki))
+You can find out much more about how to use this project in our [Wiki](https://github.com/DavidBaezDbz/check_www_site_bash.sh/wiki)
 
 ## Version 📌
 
@@ -287,7 +312,7 @@ In the fiture a will use [SemVer](http://semver.org/) for versioning. For all av
 ## Authors ✒️🖇️🛠️
 
 
-* **David Baez** - *Trabajo Inicial* - [DBZ repository](https://github.com/DavidBaezDbz) - [David Baez](https://davidbaezdbz.github.io/)
+* **David Baez** - *Initial Work* - [DBZ repository](https://github.com/DavidBaezDbz) - [David Baez](https://davidbaezdbz.github.io/)
 
 
 ## License 📄
