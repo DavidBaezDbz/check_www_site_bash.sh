@@ -116,6 +116,8 @@ function archivo_evidencias_date(){
 # sudo apt-get install cutycapt
 function take_evidence(){
     echo -en "${lightgreenColour}[*]Evidence ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
+    #CAPT_FILE=$(date -u +"%Y-%m-%dT%H-%M-%SZ_%s")
+    #CAPT_FILE=${2}
     CAPT_FILEHTML=$1-$2.html
     CAPT_FILEPDF=$1-$2.pdf
     CAPT_FILEHTML=$(echo $CAPT_FILEHTML | tr "/" "-" | sed s/://g | sed s/https//g | sed s/http//g | sed s/--//g | sed s/'#'//g )
@@ -208,6 +210,7 @@ while true;
 do
     # counters
     SITES_DOWN=0
+    
     for element in $(seq 0 $(($web_len - 1)))
     do
         FIXSSL=0
@@ -349,6 +352,8 @@ do
         fi        
         #sudo apt install mailutils
         #send email 
+        #https://tonyteaches.tech/postfix-gmail-smtp-on-ubuntu/
+        #https://www.drupaladicto.com/actualidad/como-instalar-y-configurar-postfix-como-servidor-smtp-solo-de-envio-en-ubuntu-2004 Work but google block my ip
         echo -en "${lightgreenColour}[*]Start Send Evidence ${lightblueColour}${0}$(date +%x) $(date +%X) --> ${yellowColour}${*}${endColour}\n"
         emailcorreo=$(<email)
         mutt -e "set content_type=text/html" -s "WEBServer CHECKING $DATECHECK" -a wwwevidence/$DATECHECK/HTML${DATECHECK}.7z -a wwwevidence/$DATECHECK/PDF${DATECHECK}.7z -a wwwevidence/$DATECHECK/logwebstatusfirst${DATECHECK}.log -- ${emailcorreo} <<< ${CONCLUSION}
@@ -361,6 +366,7 @@ do
             ctrl_c
         fi
     fi
+    #echo -en "\n${turquoiseColour}***********************************************************************${endColour}"
     if [ $SITES_DOWN -gt 0 ]; then   
         sleep $1
     else

@@ -116,6 +116,8 @@ function archivo_evidencias_date(){
 # sudo apt-get install cutycapt
 function take_evidence(){
     echo -en "${lightgreenColour}[*]Evidence ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
+    #CAPT_FILE=$(date -u +"%Y-%m-%dT%H-%M-%SZ_%s")
+    #CAPT_FILE=${2}
     CAPT_FILEHTML=$1-$2.html
     CAPT_FILEPDF=$1-$2.pdf
     CAPT_FILEHTML=$(echo $CAPT_FILEHTML | tr "/" "-" | sed s/://g | sed s/https//g | sed s/http//g | sed s/--//g | sed s/'#'//g )
@@ -123,26 +125,16 @@ function take_evidence(){
     #echo CAPT_FILEHTML
     echo -en "${lightgreenColour}[*]Open Web page ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
     #open the webste on firefox
-    firefox-esr $1  2>/dev/null
+    firefox $1 & 2>/dev/null
     echo -en "${lightgreenColour}[*]Save evidence ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
     #save the website in the directory
-    if [ "$FIXSSL" -eq "1" ] 
-    then
-        OPENSSL_CONF=~/dbz/bug/open/openssl.conf wget -O wwwevidence/$2/${CAPT_FILEHTML} -q - ${1}        
-    else
-        wget -O wwwevidence/$2/${CAPT_FILEHTML} -q - ${1}
-    fi
+    wget -O wwwevidence/$2/${CAPT_FILEHTML} -q - ${1}
     echo -en "${lightgreenColour}[*]Open evidence in the terminal ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
     #view the website in the terminal
     cat  wwwevidence/$2/${CAPT_FILEHTML} | w3m -dump -T text/html
     echo -en "${lightgreenColour}[*]Save in evidence image of the website ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
     # save the website image in pdf file
-    if [ "$FIXSSL" -eq "1" ] 
-    then
-        OPENSSL_CONF=~/dbz/bug/open/openssl.conf cutycapt --max-wait=3000 --print-background=on --url=${1} --out=wwwevidence/$2/$CAPT_FILEPDF 2>/dev/null
-    else
-        cutycapt --max-wait=3000 --print-background=on --url=${1} --out=wwwevidence/$2/$CAPT_FILEPDF 2>/dev/null
-    fi
+    cutycapt --max-wait=3000 --print-background=on --url=${1} --out=wwwevidence/$2/$CAPT_FILEPDF 2>/dev/null
 }
 function fill_array(){ 
     for (( i=0; i<$1; i++ ))
@@ -164,7 +156,7 @@ function dependencies(){
 			echo -e ". . . . . . . . ${blueColour}[V]${endColour}${grayColour} The tool ${endColour}${yellowColour} $programa${endColour}${grayColour} is installed"
 			let counter+=1
 		else
-			echo -e "${redColour}[X]${endColour}${grayColour} Software ${endColour}${yellowColour} $programa${endColour}${grayColour} is not installed"
+			echo -e "${redColour}[X]${endColour}${grayColour} La herramienta${endColour}${yellowColour} $programa${endColour}${grayColour} is not installed"
 		fi; sleep 0.2
 	done
 	if [ "$(echo $counter)" == "10" ]; then
@@ -190,7 +182,7 @@ fill_array $web_len
 # Counter for check websites
 CICLO=1
 #DATECHECK=$(date +%x)-$(date +%X)
-DATECHECK=$(echo $(date +%x)$(date +%X) | tr "/" "-" | sed s/://g | sed s/https//g | sed s/http//g | sed s/-//g | sed s/'#'//g | sed s/' '//g)
+DATECHECK=$(echo $(date +%x)$(date +%X) | tr "/" "-" | sed s/://g | sed s/https//g | sed s/http//g | sed s/-//g | sed s/'#'//g)
 if [ ${2} -eq "1" ]
 then
     SENDEVIDENCE="1"
@@ -210,23 +202,12 @@ do
     SITES_DOWN=0
     for element in $(seq 0 $(($web_len - 1)))
     do
-        FIXSSL=0
         # run curl
         RET=`curl -sL -w "%{http_code} %{time_total}\\n" "${site[$element]}" -o /dev/null`
         HTTP_CODE=`echo $RET | cut -d' ' -f1`
         TIME=`echo $RET | cut -d' ' -f2`
         CHECK=$greenColour"<[OK]>"
-        # Valiadte SSl certificate
-        if [ "$HTTP_CODE" -eq "000" ]; then
-            RET=`OPENSSL_CONF=~/dbz/bug/open/openssl.conf curl -sL -w "%{http_code} %{time_total}\\n" "${site[$element]}" -o /dev/null`
-            HTTP_CODE=`echo $RET | cut -d' ' -f1`
-            TIME=`echo $RET | cut -d' ' -f2`
-            if [ "$HTTP_CODE" -eq "200" ]; then
-                FIXSSL=1 
-            fi
-            #CHECK=$greenColour"<[OK]>"
-        fi
-        # Valiadte Code
+        # put cursor at 1st column
         if [ "$HTTP_CODE" -ge "400" ] || [ "$HTTP_CODE" -eq "000" ]; then
              # site down :( delay the checking
             SITES_DOWN=`expr $SITES_DOWN + 1`
@@ -349,6 +330,8 @@ do
         fi        
         #sudo apt install mailutils
         #send email 
+        #https://tonyteaches.tech/postfix-gmail-smtp-on-ubuntu/
+        #https://www.drupaladicto.com/actualidad/como-instalar-y-configurar-postfix-como-servidor-smtp-solo-de-envio-en-ubuntu-2004 Work but google block my ip
         echo -en "${lightgreenColour}[*]Start Send Evidence ${lightblueColour}${0}$(date +%x) $(date +%X) --> ${yellowColour}${*}${endColour}\n"
         emailcorreo=$(<email)
         mutt -e "set content_type=text/html" -s "WEBServer CHECKING $DATECHECK" -a wwwevidence/$DATECHECK/HTML${DATECHECK}.7z -a wwwevidence/$DATECHECK/PDF${DATECHECK}.7z -a wwwevidence/$DATECHECK/logwebstatusfirst${DATECHECK}.log -- ${emailcorreo} <<< ${CONCLUSION}
@@ -361,8 +344,9 @@ do
             ctrl_c
         fi
     fi
+    #echo -en "\n${turquoiseColour}***********************************************************************${endColour}"
     if [ $SITES_DOWN -gt 0 ]; then   
-        sleep $1
+        sleep 60
     else
         if [ -z $1 ]
         then

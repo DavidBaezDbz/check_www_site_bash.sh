@@ -116,6 +116,8 @@ function archivo_evidencias_date(){
 # sudo apt-get install cutycapt
 function take_evidence(){
     echo -en "${lightgreenColour}[*]Evidence ${lightblueColour}${1}$(date +%x) $(date +%X) --> ${yellowColour}${1}${endColour}\n"
+    #CAPT_FILE=$(date -u +"%Y-%m-%dT%H-%M-%SZ_%s")
+    #CAPT_FILE=${2}
     CAPT_FILEHTML=$1-$2.html
     CAPT_FILEPDF=$1-$2.pdf
     CAPT_FILEHTML=$(echo $CAPT_FILEHTML | tr "/" "-" | sed s/://g | sed s/https//g | sed s/http//g | sed s/--//g | sed s/'#'//g )
