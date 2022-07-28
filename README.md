@@ -29,7 +29,7 @@
 ## Started 🚀
 
 Script in **bash**. Checks an array of sites to verify if the sites are up, down or if they take a long time to open the site. 
-The bash have three parameters: 
+The bash have four (4) parameters: 
 - The time to check the sites.
 - Flag to create evidence.
 - Flag only create and send the evidence.
